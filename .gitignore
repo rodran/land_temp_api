@@ -1,0 +1,30 @@
+# ============================================
+# Land Temperature Change API - Git Ignore
+# ============================================
+
+# Python
+__pycache__/
+
+# Virtual Environments
+venv/
+env/
+
+# IDEs and Editors
+.vscode/
+.idea/
+
+# Environment Variables
+.env
+
+# Logs
+*.log
+logs/
+
+# Testing
+.pytest_cache/
+
+# Data Files (keep structure, ignore content)
+data/raw/*.csv
+
+# But keep directory structure
+!data/raw/
