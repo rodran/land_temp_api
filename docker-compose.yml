@@ -1,0 +1,52 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: landtemp_db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-landtemp}
+      POSTGRES_USER: ${POSTGRES_USER:-landtemp_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-landtemp_pass}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/sql:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-landtemp_user} -d ${POSTGRES_DB:-landtemp}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - landtemp_network
+
+  # pgAdmin for database visualization
+  pgadmin:
+    image: dpage/pgadmin4:9.10
+    container_name: landtemp_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@test.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - landtemp_network
+
+volumes:
+  postgres_data:
+    driver: local
+  pgadmin_data:
+    driver: local   
+
+networks:
+  landtemp_network:
+    driver: bridge
