@@ -15,14 +15,12 @@ CREATE TABLE staging.raw_temperature (
     element_name VARCHAR(100) NOT NULL,
     unit VARCHAR(20) NOT NULL,
     year INTEGER NOT NULL CHECK (year BETWEEN 1880 AND 2200),
-    value NUMERIC(10, 4),
-    loaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    value NUMERIC(10, 4)
 );
 
 -- Basic indexes for staging queries
 CREATE INDEX idx_staging_area_code ON staging.raw_temperature(area_code);
 CREATE INDEX idx_staging_year ON staging.raw_temperature(year);
-CREATE INDEX idx_staging_loaded_at ON staging.raw_temperature(loaded_at);
 
 -- Comments
 COMMENT ON TABLE staging.raw_temperature IS 'Raw temperature data after unpivoting year columns';

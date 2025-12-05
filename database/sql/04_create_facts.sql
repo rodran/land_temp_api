@@ -13,7 +13,6 @@ CREATE TABLE core.fact_temperature (
     metric_key INTEGER NOT NULL REFERENCES core.dim_metric(metric_key),
     year INTEGER NOT NULL CHECK (year BETWEEN 1880 AND 2200),
     value NUMERIC(10, 4),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
     -- Business key constraint (one measurement per combination)
     CONSTRAINT uk_temp_measurement UNIQUE (area_key, period_key, metric_key, year)
