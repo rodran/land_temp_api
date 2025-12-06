@@ -4,12 +4,12 @@ services:
     image: postgres:15-alpine
     container_name: landtemp_db
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-landtemp}
-      POSTGRES_USER: ${POSTGRES_USER:-landtemp_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-landtemp_pass}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_INITDB_ARGS: "--encoding=UTF8"
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "${POSTGRES_EXTERNAL_PORT}:${POSTGRES_INTERNAL_PORT}"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/sql:/docker-entrypoint-initdb.d:ro
@@ -27,11 +27,11 @@ services:
     image: dpage/pgadmin4:9.10
     container_name: landtemp_pgadmin
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@test.com}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
       PGADMIN_CONFIG_SERVER_MODE: 'False'
     ports:
-      - "${PGADMIN_PORT:-5050}:80"
+      - "${PGADMIN_PORT}:80"
     volumes:
       - pgadmin_data:/var/lib/pgadmin
     depends_on:
@@ -41,11 +41,43 @@ services:
     networks:
       - landtemp_network
 
+# ETL Pipeline (on-demand execution)
+  etl:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.etl
+    container_name: landtemp_etl
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_INTERNAL_PORT}
+      CSV_INPUT_PATH: ${CSV_INPUT_PATH}
+      CSV_AREAS_PATH: ${CSV_AREAS_PATH}
+      CSV_ELEMENTS_PATH: ${CSV_ELEMENTS_PATH}
+      ETL_BATCH_SIZE: ${ETL_BATCH_SIZE}
+      ETL_LOG_LEVEL: ${ETL_LOG_LEVEL:-INFO}
+    volumes:
+      - ./data:/app/data:ro
+      - ./etl:/app/etl:ro
+      - etl_logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - landtemp_network
+    profiles:
+      - etl
+
+
 volumes:
   postgres_data:
     driver: local
   pgadmin_data:
     driver: local   
+  etl_logs:
+    driver: local
 
 networks:
   landtemp_network:

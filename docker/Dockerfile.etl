@@ -1,0 +1,27 @@
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy ETL code
+COPY etl/ ./etl/
+
+# Copy data files
+COPY data/ ./data/
+
+# Set Python path
+ENV PYTHONPATH=/app
+
+# Run ETL pipeline
+CMD ["python", "-m", "etl.run_pipeline"]
