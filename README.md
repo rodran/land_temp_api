@@ -21,9 +21,9 @@ A production-ready data warehouse and REST API demonstrating backend and data en
 
 ### Current Status: Phase 1 - Foundation 
 
-- [ ] Database schema design
-- [ ] Docker infrastructure
-- [ ] ETL pipeline
+- [x] Database schema design
+- [x] Docker infrastructure
+- [x] ETL pipeline
 - [ ] Phase 2: FastAPI REST API
 - [ ] Phase 3: CI/CD and deployment
 
@@ -139,13 +139,13 @@ land_temp_api/
 ### Phase 1: Foundation (Current)
 **Goal**: Data warehouse with working ETL pipeline
 
-- [ ] PostgreSQL star schema
-- [ ] Dimension tables with hierarchies
-- [ ] Fact table with proper indexes
-- [ ] Analytics materialized views
-- [ ] ETL pipeline (extract, transform, load)
-- [ ] Docker orchestration
-- [ ] Data validation
+- [x] PostgreSQL star schema
+- [x] Dimension tables with hierarchies
+- [x] Fact table with proper indexes
+- [x] Analytics materialized views
+- [x] ETL pipeline (extract, transform, load)
+- [x] Docker orchestration
+- [x] Data validation
 
 **Estimated**: 10-15 hours
 
@@ -213,7 +213,6 @@ Free to use for learning and portfolio purposes.
 
 **[Rodrigo Rangel]**
 
-- Portfolio: [rodran.xyz](https://rodran.xyz)  _(coming soon)_
 - GitHub: [@rodran](https://github.com/rodran)
 - LinkedIn: [linkedin.com/in/rodran/](https://www.linkedin.com/in/rodran/)
 
